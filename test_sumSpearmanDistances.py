@@ -30,15 +30,29 @@ class TestSumSpearmanDistances(unittest.TestCase):
         proposedRank = []
         with self.assertRaises(Exception) as err:
             sumSpearmanDistances(scores,proposedRank)
-            self.assertTrue("Sorry, proposed rank is not provided" in err.exception.value)
+        self.assertEqual(str(err.exception), "Sorry, proposed rank is not provided.")
 
     def test_raise_scores(self):
         scores = {}
         proposedRank = ['A','B','C']
         with self.assertRaises(Exception) as err:
             sumSpearmanDistances(scores,proposedRank)
-            self.assertTrue("Sorry, no scores are provided." in err.exception.value)
+        self.assertEqual(str(err.exception), "Sorry, no scores are provided.")
 
+
+    def test_partial_ranking1(self):
+        scores = {'A' : (100,0.1),'B' : (90,0.3)}
+        proposedRank = ['A','B','C']
+        with self.assertRaises(Exception) as err:
+            sumSpearmanDistances(scores,proposedRank)
+        self.assertEqual(str(err.exception),"Items in scores and proposed rank are different")
+
+    def test_partial_ranking2(self):
+        scores = {'A' : (100,0.1),'B' : (90,0.3), 'B' : (90,0.3)}
+        proposedRank = ['A','B','C']
+        with self.assertRaises(Exception) as err:
+            sumSpearmanDistances(scores,proposedRank)
+        self.assertEqual(str(err.exception),"Items in scores and proposed rank are different")
 
 if __name__=='__main__':
     unittest.main(verbosity=2)

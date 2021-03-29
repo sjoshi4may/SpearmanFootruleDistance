@@ -16,7 +16,7 @@ def scoresToRanks(scores):
                                C            3           2
 
     """
-    n_items = len(scores)
+    n_items = len(scores.keys()) #
     if n_items:     # Check if scores is non-empty
         df = pd.DataFrame.from_dict(scores,orient='index')   # Using pandas to handle cases with huge number of entries
         df.columns = ['metric_'+ str(col) for col in df.columns]
@@ -31,8 +31,7 @@ def scoresToRanks(scores):
                 df[col] = range(1,df.shape[0]+1)
 
             df.drop('rank',axis=1,inplace=True)
-    else:
-        raise Exception("Sorry, no scores are provided.")
+
     return df
 
 
@@ -43,22 +42,27 @@ def sumSpearmanDistances(scores, proposedRank):
         :param scores:
         :param proposedRank:
 
-        :return: sum of spearman distance i.e an integer
+        :return:
 
-        e.g scores = {'A' : (100,0.1),
-              'B' : (90,0.3),
-              'C' : (20, 0.2)}
-        proposedRank = {'A':1, 'B':2, 'C':3}  --> returns 4
-        proposedRank = {'A':2, 'B':3, 'C':1}  --> returns 8
-        proposedRank = {'A':3, 'B':1, 'C':2}  --> returns 4
-        proposedRank = {'A':1, 'B':3, 'C':2}  --> returns 6
-        proposedRank = {'A':2, 'B':1, 'C':3}  --> returns 4
-        proposedRank = {'A':3, 'B':2, 'C':1}  --> returns 6
+        e.g ranks = [{'A':1, 'B':2, 'C':3},{'A':3, 'B':1, 'C':2}]
+
+        proposedRank = {'A':1, 'B':2, 'C':3}  --> returns (0,4)
+        proposedRank = {'A':2, 'B':3, 'C':1}  --> returns (4,4)
+        proposedRank = {'A':3, 'B':1, 'C':2}  --> returns (4,0)
+        proposedRank = {'A':1, 'B':3, 'C':2}  --> returns (2,4)
+        proposedRank = {'A':2, 'B':1, 'C':3}  --> returns (2,2)
+        proposedRank = {'A':3, 'B':2, 'C':1}  --> returns (4,2)
         """
 
     # ToDo : Add checks for partial rank cases and partial metric values being present.
-    n_items = len(proposedRank)
-    if n_items:
+
+    if not  proposedRank:
+        raise Exception("Sorry, proposed rank is not provided.")
+    elif not scores:
+        raise Exception("Sorry, no scores are provided.")
+    elif set(proposedRank)!=set(scores.keys()):
+        raise Exception("Items in scores and proposed rank are different")
+    else:
         ranks = scoresToRanks(scores) # Convert scores to ranks
         if not ranks.empty:
             ranks = ranks.reindex(proposedRank) # Reshuffle the dataset according to the proposed rank
@@ -69,5 +73,4 @@ def sumSpearmanDistances(scores, proposedRank):
                 if col != 'proposed_rank':
                     distances+=(ranks[col]-ranks['proposed_rank']).abs().sum() # calculate spearman footrule distance
             return distances
-
-    raise Exception("Sorry, proposed rank is not provided")
+    
