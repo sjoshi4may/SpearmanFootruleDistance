@@ -5,8 +5,8 @@ The sum of absolute values of the differences in the ranks.
 <h2>How to run/test</h2>
 
 1. Call sumSpearmanDistances with scores and proposed rank as mentioned in the docstring.
-2. 
-3. To test the fucntion, use test_sumSpearmanDistances.py to add test cases and then simply run it as a general python script.
+ 
+2. To test the fucntion, use test_sumSpearmanDistances.py to add test cases and then simply run it as a general python script.
 
 <h2>Reference</h2>
 
